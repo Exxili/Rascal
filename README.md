@@ -1,1 +1,1 @@
-# Rascal
+# Exxili Discord Bot

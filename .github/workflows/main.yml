@@ -1,0 +1,31 @@
+name: CI
+
+env:
+  DISCORD_TOKEN: '${{secrets.DISCORD_TOKEN}}'
+  DISCORD_ID: '${{secrets.DISCORD_ID}}'
+  DISCORD_KEY: '${{secrets.DISCORD_KEY}}'
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push request event for the master branch
+  push:    
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    # Our previously created self-hosted runner
+    runs-on: self-hosted
+
+    # A sequence of tasks that will execute as part of the job
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        
+      - run: npm ci
+      - run: npm run build
+      - run: pm2 delete discord-bot
+        continue-on-error: true
+      - run: pm2 start build/main.js -f --watch --name discord-bot
+
